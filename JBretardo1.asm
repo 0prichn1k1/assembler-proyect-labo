@@ -33,18 +33,24 @@
 
 //-----------------INICIACION--------------
 setup:
-	cbi	ddrc,3
-	sbi portc,3
-	sbi ddrc,2
-	sbi ddrd,2
-	sei 
-;jmp inicio
+	;pongo el pin c3 en entrada
+	cbi	DDRc,3
+	;activo res pull-up
+	sbi PORTc,3
+	;pongo el pin c2 en salida
+	sbi DDRc,2
+	;pongo el pin d2 en salida
+	sbi DDRd,2
+	
+	sbi PCINT,11
+	sbi	PCMSK,1
+	sei
 
 //--------- PROGRAMA PRINCIPAL -----------
 inicio:
-	sbi portc,2
+	sbi PORTc,2
 	call retardo
-	cbi portc,2
+	cbi PORTc,2
 	call retardo
 	jmp inicio
 
@@ -71,18 +77,24 @@ loop3:
       
 
 
-//---------INTERRUPCION INTPC0------------------
-PC_INT0:
-	sbis pinc,3
+//---------INTERRUPCION INTP11------------------
+PC_INT11:
+	sbis PINc,3
 	jmp finintpc
-	
-	
+	sbis PINd,2
+	jmp ledPrendido
+ledApagado:
+	sbi PORTd.2
+	reti
+ledPrendido:
+	cbi PORTd,2
+	reti
 finintpc:
 	reti
 ;------------ VECTORES DE INTERRUPCION ----------------
 EXT_INT0:
 EXT_INT1:
-
+PC_INT0:
 PC_INT1:
 PC_INT2:
 WDT:
